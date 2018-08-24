@@ -4,5 +4,5 @@ public interface Particle {
     double getRadius();
     double getX();
     double getY();
-    boolean isColliding(Particle p);
+    boolean isCollidingWith(Particle p);
 }
