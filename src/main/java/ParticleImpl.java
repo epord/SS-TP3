@@ -33,13 +33,13 @@ public class ParticleImpl implements Particle{
         return y;
     }
 
-    public boolean isColliding(Particle particle) {
+    public boolean isCollidingWith(Particle particle) {
         double distance = Math.sqrt(Math.pow(particle.getX() - getX(), 2) + Math.pow(particle.getY() - getY(), 2));
         return distance < particle.getRadius() + getRadius();
     }
 
     @Override
     public String toString() {
-        return id + " " + x + " " + y + " " + radius;
+        return "<id: " + id + " x: " + x + " y: " + y + " r: " + radius + ">";
     }
 }

@@ -1,4 +1,3 @@
-package automaton;
 
 import java.io.*;
 import java.util.Collection;
