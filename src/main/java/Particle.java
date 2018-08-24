@@ -1,3 +1,5 @@
+import org.la4j.vector.dense.BasicVector;
+
 public interface Particle {
 
     int getId();
@@ -5,4 +7,5 @@ public interface Particle {
     double getX();
     double getY();
     boolean isCollidingWith(Particle p);
+    BasicVector getVelocity();
 }
