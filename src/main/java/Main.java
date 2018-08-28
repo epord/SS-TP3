@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
+import javafx.stage.FileChooser;
+
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Collection;
 
@@ -16,6 +16,9 @@ public class Main {
             bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + "\n");
         }
         bw.close();
+
+        FileManager.appendParticlesTo("data.txt",generatedParticles,0.4);
+
     }
 
 }
