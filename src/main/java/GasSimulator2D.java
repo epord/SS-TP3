@@ -40,10 +40,11 @@ public class GasSimulator2D {
 			// Cambiamos la / las particulas según la colision originada
 			//TODO: Choque
 
-			// Removemos de la priority queue todas las colisiones con las particulas que chocaron.
-
-
 			// Calculamos nuevamente las colisiones de aquellas partículas que chocaron, con todas las demás y con las paredes.
+			List<Particle> collisionedParticles = new LinkedList<>();
+			if (collision.getObject1() instanceof Particle) collisionedParticles.add((Particle) collision.getObject1());
+			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
+			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles);
 		}
 	}
 
