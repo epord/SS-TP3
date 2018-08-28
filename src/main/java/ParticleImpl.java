@@ -2,10 +2,10 @@ import org.la4j.vector.dense.BasicVector;
 
 public class ParticleImpl implements Particle{
 
-    private int id;
-    private double radius;
-    private double x;
-    private double y;
+    private Integer id;
+    private Double radius;
+    private Double x;
+    private Double y;
     private BasicVector velocity;
 
     public ParticleImpl(int id, double radius, double x, double y, double speedX, double speedY) {
@@ -16,23 +16,23 @@ public class ParticleImpl implements Particle{
         this.velocity = new BasicVector(new double[]{speedX, speedY});
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public double getRadius() {
+    public Double getRadius() {
         return radius;
     }
 
-    public double getX() {
+    public Double getX() {
         return x;
     }
 
-    public double getY() {
+    public Double getY() {
         return y;
     }
 
@@ -40,12 +40,20 @@ public class ParticleImpl implements Particle{
         return velocity;
     }
 
-    @Override
-    public void setVelocity(BasicVector velocity) {
-        this.velocity = velocity;
-    }
+	public void setX(double x) {
+		this.x = x;
+	}
 
-    public boolean isCollidingWith(Particle particle) {
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	@Override
+	public void setVelocity(BasicVector velocity) {
+		this.velocity = velocity;
+	}
+
+	public boolean isCollidingWith(Particle particle) {
         double distance = Math.sqrt(Math.pow(particle.getX() - getX(), 2) + Math.pow(particle.getY() - getY(), 2));
         return distance < particle.getRadius() + getRadius();
     }
@@ -71,6 +79,16 @@ public class ParticleImpl implements Particle{
         }
         return -1 * (VdotR + Math.sqrt(d))/VdotV;
     }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+
+		Particle other = (Particle) obj;
+
+		return this.getId().equals(other.getId()) && this.getRadius().equals(other.getRadius()) && this.getX().equals(other.getX())
+				&& this.getY().equals(other.getY()) && this.getVelocity().equals(other.getVelocity());
+	}
 
     @Override
     public String toString() {
