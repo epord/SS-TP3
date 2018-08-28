@@ -8,17 +8,7 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        // Generate random initial state
-//        RandomGenerator randomGenerator = new RandomGenerator();
-//        Collection<Particle> generatedParticles = randomGenerator.generateParticles(0.09, 0.24, 1000, 0.0015, 0.0015, 0.05, 0.5);
-//
-//        BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
-//        bw.write(0.09 + " " + 0.24 + " " + 1000 + "\n");
-//        for (Particle p: generatedParticles) {
-//            bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + " " + p.getVelocity().get(0) + " " + p.getVelocity().get(1) +  "\n");
-//        }
-//        bw.close();
-
+//        generateRandomWorld("p5/simulation-animator/random.txt", 0.09, 0.24, 1000, 0.0015, 0.0015, 0.05, 0.5);
 
         GasSimulator2D simulator = getWorldFromFile("p5/simulation-animator/random.txt");
 
@@ -40,6 +30,20 @@ public class Main {
         }
 
         return new GasSimulator2D(particles, worldHeight, worldWidth);
+    }
+
+    private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) throws Exception{
+        // Generate random initial state
+        RandomGenerator randomGenerator = new RandomGenerator();
+        Collection<Particle> generatedParticles = randomGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
+        bw.write(0.09 + " " + 0.24 + " " + 1000 + "\n");
+        for (Particle p: generatedParticles) {
+            bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + " " + p.getVelocity().get(0) + " " + p.getVelocity().get(1) +  "\n");
+        }
+        bw.close();
+
     }
 
 }
