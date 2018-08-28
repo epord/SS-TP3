@@ -34,8 +34,8 @@ public class Main {
 
     private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) throws Exception{
         // Generate random initial state
-        RandomGenerator randomGenerator = new RandomGenerator();
-        Collection<Particle> generatedParticles = randomGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
+        RandomParticleGenerator randomParticleGenerator = new RandomParticleGenerator();
+        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
         bw.write(0.09 + " " + 0.24 + " " + 1000 + "\n");

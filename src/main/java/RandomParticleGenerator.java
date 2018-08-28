@@ -1,10 +1,8 @@
-import org.la4j.vector.dense.BasicVector;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-public class RandomGenerator {
+public class RandomParticleGenerator {
 
     public Collection<Particle> generateParticles(double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) {
         Collection<Particle> particles = new ArrayList<Particle>();
