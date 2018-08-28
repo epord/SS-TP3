@@ -1,4 +1,4 @@
-public class Wall implements Obstacle {
+public abstract class Wall implements Obstacle {
 
     private double x1, y1, x2, y2;
 
@@ -9,9 +9,19 @@ public class Wall implements Obstacle {
         this.y2 = y2;
     }
 
-    @Override
-    public Double getCollisionTime(Particle particle) {
+	public double getX1() {
+		return x1;
+	}
 
-        return null;
-    }
+	public double getY1() {
+		return y1;
+	}
+
+	public double getX2() {
+		return x2;
+	}
+
+	public double getY2() {
+		return y2;
+	}
 }

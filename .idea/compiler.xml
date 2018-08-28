@@ -10,5 +10,8 @@
         <module name="ss-tp3" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ss-tp3" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
