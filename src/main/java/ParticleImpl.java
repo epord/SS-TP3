@@ -90,7 +90,12 @@ public class ParticleImpl implements Particle{
 				&& this.getY().equals(other.getY()) && this.getVelocity().equals(other.getVelocity());
 	}
 
-    @Override
+	@Override
+	public int hashCode() {
+		return getId().hashCode() + getRadius().hashCode() + getX().hashCode() + getY().hashCode() + getVelocity().hashCode();
+	}
+
+	@Override
     public String toString() {
         return "<id: " + id + " x: " + x + " y: " + y + " r: " + radius + ">";
     }
