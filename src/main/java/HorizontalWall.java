@@ -16,6 +16,7 @@ public class HorizontalWall extends Wall {
 	public Double getCollisionTime(Particle particle) {
 		double tc1 = (getY() - particle.getY() - particle.getRadius()) / particle.getVelocity().get(1);
 		double tc2 = (getY() - particle.getY() + particle.getRadius()) / particle.getVelocity().get(1);
-		return Math.min(tc1, tc2);
+		double min = Math.min(tc1, tc2);
+		return min >= 0 ? min : null;
 	}
 }

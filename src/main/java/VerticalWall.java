@@ -16,6 +16,7 @@ public class VerticalWall extends Wall {
 	public Double getCollisionTime(Particle particle) {
 		double tc1 = (getX() - particle.getX() - particle.getRadius()) / particle.getVelocity().get(0);
 		double tc2 = (getX() - particle.getX() + particle.getRadius()) / particle.getVelocity().get(0);
-		return Math.min(tc1, tc2);
+		double min = Math.min(tc1, tc2);
+		return min >= 0 ? min : null;
 	}
 }
