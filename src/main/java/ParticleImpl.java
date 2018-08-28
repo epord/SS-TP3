@@ -40,7 +40,12 @@ public class ParticleImpl implements Particle{
         return velocity;
     }
 
-	public boolean isCollidingWith(Particle particle) {
+    @Override
+    public void setVelocity(BasicVector velocity) {
+        this.velocity = velocity;
+    }
+
+    public boolean isCollidingWith(Particle particle) {
         double distance = Math.sqrt(Math.pow(particle.getX() - getX(), 2) + Math.pow(particle.getY() - getY(), 2));
         return distance < particle.getRadius() + getRadius();
     }

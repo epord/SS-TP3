@@ -1,3 +1,4 @@
+
 public abstract class Wall implements Obstacle {
 
     private double x1, y1, x2, y2;
@@ -24,4 +25,7 @@ public abstract class Wall implements Obstacle {
 	public double getY2() {
 		return y2;
 	}
+
+	public abstract boolean isHorizontal();
+	public abstract boolean isVertical();
 }

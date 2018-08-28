@@ -19,4 +19,14 @@ public class VerticalWall extends Wall {
 		double min = Math.min(tc1, tc2);
 		return min >= 0 ? min : null;
 	}
+
+	@Override
+	public boolean isHorizontal() {
+		return false;
+	}
+
+	@Override
+	public boolean isVertical() {
+		return true;
+	}
 }
