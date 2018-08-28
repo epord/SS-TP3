@@ -8,5 +8,6 @@ public interface Particle {
     double getY();
     boolean isCollidingWith(Particle p);
     BasicVector getVelocity();
+    Double getCollisionTime(Particle particle);
     void setVelocity(BasicVector velocity);
 }
