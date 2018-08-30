@@ -1,23 +1,22 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-//        generateRandomWorld("p5/simulation-animator/random.txt", 0.09, 0.24, 1000, 0.0015, 0.0015, 0.05, 0.5);
+//        generateRandomWorld("p5/simulation-animator/random.txt", 10, 10, 100, 0.15, 0.15, 0.05, 0.1);
 
-        GasSimulator2D simulator = getWorldFromFile("p5/simulation-animator/random.txt");
+		File savedWorld = new File("p5/simulation-animator/random.txt");
+		System.out.println(savedWorld.getAbsolutePath());
+        GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
         simulator.simulate(100);
-        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
+//        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
     }
 
-    private static GasSimulator2D getWorldFromFile(String filename) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader(filename));
+    private static GasSimulator2D getWorldFromFile(File file) throws Exception {
+        BufferedReader br = new BufferedReader(new FileReader(file));
         String[] l = br.readLine().split(" ");
         Double worldHeight = Double.parseDouble(l[0]);
         Double worldWidth = Double.parseDouble(l[1]);
@@ -39,9 +38,9 @@ public class Main {
         Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
-        bw.write(0.09 + " " + 0.24 + " " + 1000 + "\n");
-        for (Particle p: generatedParticles) {
-            bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + " " + p.getVelocity().get(0) + " " + p.getVelocity().get(1) +  "\n");
+		bw.write(worldHeight + " " + worldWidth + " " + particlesAmount + "\n");
+		for (Particle p: generatedParticles) {
+			bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + " " + p.getVelocity().get(0) + " " + p.getVelocity().get(1) +  "\n");
         }
         bw.close();
 
