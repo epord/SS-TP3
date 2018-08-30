@@ -53,6 +53,7 @@ public class FileManager {
             System.out.println("appended:"+particle.getId());
             bw.write(sb.toString());
         }
+        bw.close();
     }
 
 }
