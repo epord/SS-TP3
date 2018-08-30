@@ -41,11 +41,14 @@ public class GasSimulator2D {
 			// Cambiamos la / las particulas según la colision originada
 			calculateCollision(collision.getObject1(), collision.getObject2());
 
+			//Ahora el tiempo actual es el nuevo
+			currentTime = newTime;
+
 			// Calculamos nuevamente las colisiones de aquellas partículas que chocaron, con todas las demás y con las paredes.
 			List<Particle> collisionedParticles = new LinkedList<>();
 			if (collision.getObject1() instanceof Particle) collisionedParticles.add((Particle) collision.getObject1());
 			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
-			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles);
+			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
 		}
 	}
 

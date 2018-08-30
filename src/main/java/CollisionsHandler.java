@@ -47,7 +47,7 @@ public class CollisionsHandler {
 
 	public static void updateCollisions(Collection<Particle> particles, Collection<Obstacle> obstacles,
 										PriorityQueue<Collision> collisions, Map<Particle, Set<Collision>> particleCollisions,
-										List<Particle> collisionedParticles) {
+										List<Particle> collisionedParticles, Double currentTime) {
 
 		for (Particle particle: collisionedParticles) {
 			//First I remove all the collisions that were going to happen with this particle.
@@ -65,7 +65,7 @@ public class CollisionsHandler {
 			for (Particle p2: particles) {
 				Double collisionTime = particle.getCollisionTime(p2);
 				if (collisionTime == null) continue;
-				Collision collision = new Collision(collisionTime, particle, p2);
+				Collision collision = new Collision(collisionTime + currentTime, particle, p2);
 
 				collisions.add(collision);
 				particleCollisions.get(particle).add(collision);
@@ -76,7 +76,7 @@ public class CollisionsHandler {
 			for (Obstacle obstacle: obstacles) {
 				Double collisionTime = obstacle.getCollisionTime(particle);
 				if (collisionTime == null) continue;
-				Collision collision = new Collision(collisionTime, particle, obstacle);
+				Collision collision = new Collision(collisionTime + currentTime, particle, obstacle);
 
 				particleCollisions.get(particle).add(collision);
 				collisions.add(collision);
