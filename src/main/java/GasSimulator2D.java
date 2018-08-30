@@ -30,6 +30,7 @@ public class GasSimulator2D {
 		while(currentTime < timeLimit) {
 			// Tomamos la colision de menor tiempo
 			Collision collision = collisions.poll();
+			System.out.println("Collision: " + collision.toString());
 			Double newTime = collision.getCollisionTime();
 
 			Double deltaT = newTime - currentTime;
@@ -38,13 +39,23 @@ public class GasSimulator2D {
 			evolveSystem(particles, deltaT);
 
 			// Cambiamos la / las particulas según la colision originada
-			//TODO: Choque
+			calculateCollision(collision.getObject1(), collision.getObject2());
 
 			// Calculamos nuevamente las colisiones de aquellas partículas que chocaron, con todas las demás y con las paredes.
 			List<Particle> collisionedParticles = new LinkedList<>();
 			if (collision.getObject1() instanceof Particle) collisionedParticles.add((Particle) collision.getObject1());
 			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
 			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles);
+		}
+	}
+
+	public void calculateCollision(PhysicalObject o1, PhysicalObject o2) {
+		if (o1 instanceof Particle && o2 instanceof Particle) {
+			calculateCollision((Particle) o1, (Particle) o2);
+		} else  if(o1 instanceof Wall || o2 instanceof Wall) {
+			Wall wall = (Wall) (o1 instanceof Wall ? o1 : o2);
+			Particle particle = (Particle) (o1 instanceof Wall ? o2 : o1);
+			calculateCollision(particle, wall);
 		}
 	}
 

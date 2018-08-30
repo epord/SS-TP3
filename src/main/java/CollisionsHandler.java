@@ -53,8 +53,10 @@ public class CollisionsHandler {
 			//First I remove all the collisions that were going to happen with this particle.
 			particleCollisions.get(particle).forEach(collision -> {
 				collisions.remove(collision);
-				Particle other = particle.equals(collision.getObject1()) ? (Particle)collision.getObject2() : (Particle) collision.getObject1();
-				particleCollisions.get(other).remove(collision);
+				PhysicalObject other = particle.equals(collision.getObject1()) ? collision.getObject2() : collision.getObject1();
+				if (other instanceof Particle) {
+					particleCollisions.get(other).remove(collision);
+				}
 			});
 			//Then I calculate all the new possible collisions.
 			particleCollisions.put(particle, new HashSet<>());

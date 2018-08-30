@@ -12,6 +12,7 @@ public class Main {
 
         GasSimulator2D simulator = getWorldFromFile("p5/simulation-animator/random.txt");
 
+        simulator.simulate(100);
         Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
     }
 

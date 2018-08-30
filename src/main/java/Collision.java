@@ -38,6 +38,11 @@ public class Collision {
 
 	@Override
 	public int hashCode() {
-		return this.getCollisionTime().hashCode() / (this.getObject1().hashCode() + this.getObject2().hashCode());
+		return this.getCollisionTime().hashCode() - (this.getObject1().hashCode() + this.getObject2().hashCode());
+	}
+
+	@Override
+	public String toString() {
+		return "Collision: { " + getCollisionTime() + ", " + getObject1().toString() + ", " + getObject2().toString() + " }";
 	}
 }

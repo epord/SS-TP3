@@ -83,6 +83,7 @@ public class ParticleImpl implements Particle{
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
+		if (!(obj instanceof Particle)) return false;
 
 		Particle other = (Particle) obj;
 
@@ -92,7 +93,8 @@ public class ParticleImpl implements Particle{
 
 	@Override
 	public int hashCode() {
-		return getId().hashCode() + getRadius().hashCode() + getX().hashCode() + getY().hashCode() + getVelocity().hashCode();
+//		return getId().hashCode() + getRadius().hashCode() + getX().hashCode() + getY().hashCode() + getVelocity().hashCode();
+		return getId().hashCode();
 	}
 
 	@Override
