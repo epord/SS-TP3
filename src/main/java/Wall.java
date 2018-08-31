@@ -32,6 +32,7 @@ public abstract class Wall implements Obstacle {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
+		if (!(obj instanceof Wall)) return false;
 
 		Wall other = (Wall) obj;
 
@@ -40,6 +41,6 @@ public abstract class Wall implements Obstacle {
 
 	@Override
 	public int hashCode() {
-		return (getX1().hashCode() + getY1().hashCode()) / (getX2().hashCode() + getY2().hashCode());
+		return (getX1().hashCode() + getY1().hashCode()) - (getX2().hashCode() + getY2().hashCode());
 	}
 }
