@@ -16,7 +16,9 @@ public class RandomParticleGenerator {
                 double y = random.nextDouble() * (worldHeight);
                 double radius = random.nextDouble() * (maxRadius - minRadius) + minRadius;
                 double speedX = random.nextDouble() * (maxSpeed - minSpeed) + minSpeed;
+                speedX = random.nextBoolean() ? speedX * -1 : speedX;
                 double speedY = random.nextDouble() * (maxSpeed - minSpeed) + minSpeed;
+                speedY = random.nextBoolean() ? speedY * -1 : speedY;
                 Particle newParticle = new ParticleImpl(id++, radius, x, y, speedX, speedY);
                 if (isInBounds(newParticle, worldHeight, worldWidth) && !isCollidingWithExistingParticles(newParticle, particles)) {
                     generated = true;

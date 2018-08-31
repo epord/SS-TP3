@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 
 import org.la4j.vector.dense.BasicVector;
@@ -6,9 +9,14 @@ public class GasSimulator2D {
 
 	private Collection<Particle> particles;
 	private Collection<Obstacle> obstacles;
+	private double worldWidth;
+	private double worldHeight;
+	private double frameSkipping = 10; // will print every N frames
 
 	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
 		this.particles = particles;
+		this.worldWidth = worldWidth;
+		this.worldHeight = worldHeight;
 		// generate obstacles
 		this.obstacles = new LinkedList<>();
 		this.obstacles.add(new HorizontalWall(0, worldWidth, 0));
@@ -18,7 +26,7 @@ public class GasSimulator2D {
 
 	}
 
-	public void simulate(double timeLimit) {
+	public void simulate(double timeLimit, double frameLimit) throws Exception{
 		//Creamos la priority queue con todos los tiempos de colision
 		PriorityQueue<Collision> collisions = new PriorityQueue<>(Comparator.comparing(Collision::getCollisionTime));
 		Map<Particle, Set<Collision>> particleCollisions = new HashMap<>();
@@ -27,10 +35,23 @@ public class GasSimulator2D {
 
 		double currentTime = 0;
 
+		BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/output.txt"));
+		bw.write(worldWidth + " " + worldHeight + " " + particles.size() + "\n");
+		bw.close();
+		int frameCount = 0;
+		int printedFrameCount = 0;
 		while(currentTime < timeLimit) {
+			// Imprimimos estado del mundo
+			if (frameCount % frameSkipping == 0) {
+				FileManager.appendParticlesTo("p5/simulation-animator/output.txt", particles, currentTime);
+				printedFrameCount++;
+			}
+			frameCount++;
+			if (frameLimit == printedFrameCount) break;
+
 			// Tomamos la colision de menor tiempo
 			Collision collision = collisions.poll();
-			System.out.println("Collision: " + collision.toString());
+//			System.out.println("Collision: " + collision.toString());
 			Double newTime = collision.getCollisionTime();
 
 			Double deltaT = newTime - currentTime;
