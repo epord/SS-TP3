@@ -5,13 +5,15 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-//        generateRandomWorld("p5/simulation-animator/random.txt", 10, 10, 100, 0.15, 0.15, 0.05, 0.1);
+        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 1000, 0.15, 0.15, 3.0, 5.0);
 
 		File savedWorld = new File("p5/simulation-animator/random.txt");
 		System.out.println(savedWorld.getAbsolutePath());
         GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
-        simulator.simulate(100);
+        System.out.println("Starting Simulation");
+        simulator.simulate(100, 1000);
+        System.out.println("Ending Simulation");
 //        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
     }
 

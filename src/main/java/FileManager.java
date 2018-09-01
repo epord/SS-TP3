@@ -32,9 +32,8 @@ public class FileManager {
         FileWriter bw = new FileWriter(file,true);
         StringBuilder sb = new StringBuilder();
 
-        sb.append("STATS,TIME:").append(time.toString(), 0, 3).append("\n");
-        sb.append("DATA\n");
-        System.out.println(particles.size());
+//        sb.append("STATS,TIME:").append(time.toString(), 0, 3).append("\n");
+//        System.out.println(particles.size());
         bw.write(sb.toString());
         for(Particle particle : particles) {
             sb.setLength(0);
@@ -50,7 +49,7 @@ public class FileManager {
             .append(",")
             .append(Utils.formatDouble(particle.getRadius()))
             .append("\n");
-            System.out.println("appended:"+particle.getId());
+//            System.out.println("appended:"+particle.getId());
             bw.write(sb.toString());
         }
         bw.close();
