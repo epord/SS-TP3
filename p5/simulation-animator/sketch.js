@@ -57,5 +57,5 @@ function draw() {
 
 function drawParticle(x, y, radius, color) {
   fill(color);
-  ellipse(x * (canvasSize.width / worldSize.width), y * (canvasSize.height / worldSize.height), radius * (canvasSize.width / worldSize.width), radius * (canvasSize.height / worldSize.height));
+  ellipse(x * (canvasSize.width / worldSize.width), y * (canvasSize.height / worldSize.height), radius * 2 * (canvasSize.width / worldSize.width), radius * 2 * (canvasSize.height / worldSize.height));
 }
