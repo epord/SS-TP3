@@ -2,6 +2,7 @@
 public abstract class Wall implements Obstacle {
 
     private Double x1, y1, x2, y2;
+    protected double cumulatedImpulse = 0;
 
     public Wall(double x1, double y1, double x2, double y2) {
         this.x1 = x1;
@@ -9,6 +10,16 @@ public abstract class Wall implements Obstacle {
         this.x2 = x2;
         this.y2 = y2;
     }
+
+	public double getCumulatedImpulse() {
+		return cumulatedImpulse;
+	}
+
+	public abstract void addImpulse(Particle p);
+
+	public double getLength() {
+    	return Math.sqrt((x1-x2)*(x1-x2) - (y1-y2)*(y1-y2));
+	}
 
 	public Double getX1() {
 		return x1;
