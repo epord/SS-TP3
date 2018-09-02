@@ -18,7 +18,7 @@ public abstract class Wall implements Obstacle {
 	public abstract void addImpulse(Particle p);
 
 	public double getLength() {
-    	return Math.sqrt((x1-x2)*(x1-x2) - (y1-y2)*(y1-y2));
+    	return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 	}
 
 	public Double getX1() {

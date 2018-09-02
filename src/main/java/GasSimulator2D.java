@@ -12,7 +12,6 @@ public class GasSimulator2D {
 	private double worldWidth;
 	private double worldHeight;
 	private double frameSkipping = 10; // will print every N frames
-	private Wall pressureReference;
 
 	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
 		this.particles = particles;
@@ -20,17 +19,16 @@ public class GasSimulator2D {
 		this.worldHeight = worldHeight;
 		// generate obstacles
 		this.obstacles = new LinkedList<>();
-		pressureReference = new HorizontalWall(0, worldWidth, 0);
-		this.obstacles.add(pressureReference);
+		this.obstacles.add(new HorizontalWall(0, worldWidth, 0));
 		this.obstacles.add(new HorizontalWall(0, worldWidth, worldHeight));
 		this.obstacles.add(new VerticalWall(0, 0, worldHeight));
 		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight));
 
 	}
 
-	public double getPressure(double timeElapsed) {
-		double force = pressureReference.getCumulatedImpulse() / timeElapsed;
-		return force / pressureReference.getLength();
+	public double getPressure(Wall w, double timeElapsed) {
+		double force = w.getCumulatedImpulse() / timeElapsed;
+		return force / w.getLength();
 	}
 
 	public void simulate(double timeLimit, double frameLimit) throws Exception{
@@ -80,7 +78,10 @@ public class GasSimulator2D {
 			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
 			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
 		}
-		System.out.println("Pressure: " + this.getPressure(currentTime));
+
+		for (Obstacle o: obstacles) {
+			System.out.println("Pressure: " + this.getPressure((Wall) o, currentTime));
+		}
 	}
 
 	public void calculateCollision(PhysicalObject o1, PhysicalObject o2) {
