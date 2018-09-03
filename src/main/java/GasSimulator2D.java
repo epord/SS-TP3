@@ -54,8 +54,16 @@ public class GasSimulator2D {
 
 		double currentTime = 0;
 
+		BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/simulationInfo.txt"));
+		bw.write(obstacles.size() + "\n");
+		for (Obstacle o: obstacles) {
+			if (o instanceof Wall) {
+				bw.write(((Wall) o).getX1() + " " + ((Wall) o).getY1() + " " + ((Wall) o).getX2() + " " + ((Wall) o).getY2() + "\n");
+			}
+		}
+		bw.close();
 
-		BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/output.txt"));
+		bw = new BufferedWriter(new FileWriter("p5/simulation-animator/output.txt"));
 		bw.write(worldWidth + " " + worldHeight + " " + particles.size() + "\n");
 		bw.close();
 		int frameCount = 0;
@@ -96,7 +104,7 @@ public class GasSimulator2D {
 
 		System.out.println("Starting Measures");
 		double measuresStartTime = currentTime;
-		double measuresDuration = 50;
+		double measuresDuration = 10;
 		// Calculations after equilimbrium
 		while (currentTime - measuresStartTime < measuresDuration) {
 			// Tomamos la colision de menor tiempo
