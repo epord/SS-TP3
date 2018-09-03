@@ -10,22 +10,23 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Integer simulations = 10;
+        Integer simulations = 1;
         ExperimentsStatsAgregator<GasMetrics> agregator = new ExperimentsStatsAgregator<>();
         for (int i = 0; i < simulations; i++) {
-            generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 50, 0.15, 0.15, 1.0, 2.0);
+            generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 500, 0.15, 0.15, 2.0, 2.0);
 
             File savedWorld = new File("p5/simulation-animator/random.txt");
             System.out.println(savedWorld.getAbsolutePath());
             GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
             System.out.println("Starting Simulation: " + i);
-            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(300.0, 0.01,5000,true);
+            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(500.0, 1.0,10000,false);
             agregator.addStatsHolder(holder);
             System.out.println("Ending Simulation: " + i);
         }
 
         StringBuilder stringBuilder = agregator.buildStatsOutput(Arrays.asList(Operation.STD_LOW, Operation.MEAN, Operation.STD_HIGH));
+        FileManager.writeString("output.csv",stringBuilder.toString());
         System.out.println(stringBuilder.toString());
     }
 

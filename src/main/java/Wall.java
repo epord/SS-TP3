@@ -2,7 +2,9 @@
 public abstract class Wall implements Obstacle {
 
     private Double x1, y1, x2, y2;
-    protected double cumulatedImpulse = 0;
+    protected Double cumulatedImpulse = 0.0;
+    protected Double lastTimePressureWasChecked = 0.0;
+    protected Double lastPressureRecorded = 0.0;
     private Boolean doubleSided;
 
     public Wall(double x1, double y1, double x2, double y2, Boolean doubleSided) {
@@ -13,9 +15,16 @@ public abstract class Wall implements Obstacle {
         this.doubleSided = doubleSided;
     }
 
-	public double getCumulatedImpulse() {
-		return cumulatedImpulse;
-	}
+	public double getPressureAt(Double currentTime) {
+    	if(currentTime == lastTimePressureWasChecked || currentTime.equals(lastTimePressureWasChecked)){
+    		return lastPressureRecorded;
+		}
+		Double pressure = cumulatedImpulse / ((currentTime - lastTimePressureWasChecked)*getSurface()) ;
+		lastTimePressureWasChecked = currentTime;
+		cumulatedImpulse = 0.0;
+		lastPressureRecorded = pressure;
+		return pressure;
+    }
 
 	public abstract void addImpulse(Particle p);
 

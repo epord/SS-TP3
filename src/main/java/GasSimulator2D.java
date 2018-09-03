@@ -29,13 +29,15 @@ public class GasSimulator2D {
 		this.obstacles.add(new VerticalWall(0, 0, worldHeight,false));
 		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight,false));
 //		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/2));
-		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3,true));
-		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight,true));
+//		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3,true));
+//		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight,true));
 		// calculate temperature
 		for (Particle p: particles) {
 			temperature += Math.pow(p.getVelocityNorm(), 2);
 		}
 		temperature /= particles.size();
+		//Multiply by boltzmans constant
+		temperature *= 1.38064852e10-23;
 		statsHolder = new ExperimentStatsHolder<>();
 	}
 
@@ -53,9 +55,8 @@ public class GasSimulator2D {
 		return ExperimentsStatsAgregator.getStandardDeviation(pressures);
 	}
 
-	public double getPressure(Wall w, double timeElapsed) {
-		double force = w.getCumulatedImpulse() / timeElapsed;
-		return force / w.getSurface();
+	public double getPressure(Wall w, double currentTime) {
+		return w.getPressureAt(currentTime);
 	}
 
 	public double getBalance(){
@@ -116,7 +117,7 @@ public class GasSimulator2D {
 				printedFrameCount++;
 				nextFrameTime = printedFrameCount * timeStep;
 
-				statsHolder.addDataPoint(GasMetrics.PRESSURE, currentTime, getPressureMean(currentTime));
+				statsHolder.addDataPoint(GasMetrics.DY_PRESSURE, currentTime, getPressureMean(currentTime));
 				statsHolder.addDataPoint(GasMetrics.P_DIFF, currentTime, getPressureDifference(currentTime));
 				statsHolder.addDataPoint(GasMetrics.BALANCE, currentTime, getBalance());
 			}
@@ -140,9 +141,11 @@ public class GasSimulator2D {
 				simulationStaleTime = currentTime;
 			}
 		}
-
+		currentTime = (printedFrameCount - 1)*timeStep;
 		statsHolder.addDataPoint(GasMetrics.TEMPERATURE,currentTime,temperature);
-		statsHolder.addDataPoint(GasMetrics.TIME_TO_EQUILIBRIUM,currentTime,currentTime);
+		statsHolder.addDataPoint(GasMetrics.EQ_TIME,currentTime,currentTime);
+		statsHolder.addDataPoint(GasMetrics.EQ_PRESSURE,currentTime,getPressureMean(currentTime));
+
 		System.out.println("Temperature: " + this.getTemperature());
 		for (Obstacle o: obstacles) {
 			System.out.println("Pressure: " + this.getPressure((Wall) o, currentTime));
