@@ -17,7 +17,10 @@ public class VerticalWall extends Wall {
 		double tc1 = (getX() - particle.getX() - particle.getRadius()) / particle.getVelocity().get(0);
 		double tc2 = (getX() - particle.getX() + particle.getRadius()) / particle.getVelocity().get(0);
 		double min = Math.min(tc1, tc2);
-		return min >= 0 ? min : null;
+		if (min < 0) return null;
+		double collisionY = particle.getY() + particle.getVelocity().get(1) * min;
+		if (collisionY < getY1() || collisionY > getY2()) return null;
+		return min;
 	}
 
 	@Override

@@ -17,7 +17,10 @@ public class HorizontalWall extends Wall {
 		double tc1 = (getY() - particle.getY() - particle.getRadius()) / particle.getVelocity().get(1);
 		double tc2 = (getY() - particle.getY() + particle.getRadius()) / particle.getVelocity().get(1);
 		double min = Math.min(tc1, tc2);
-		return min >= 0 ? min : null;
+		if (min < 0) return null;
+		double collisionX = particle.getX() + particle.getVelocity().get(0) * min;
+		if (collisionX < getX1() || collisionX > getX2()) return null;
+		return min;
 	}
 
 	@Override

@@ -5,14 +5,14 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 1000, 0.15, 0.15, 3.0, 5.0);
+        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 500, 0.15, 0.15, 3.0, 5.0);
 
 		File savedWorld = new File("p5/simulation-animator/random.txt");
 		System.out.println(savedWorld.getAbsolutePath());
         GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
         System.out.println("Starting Simulation");
-        simulator.simulate(100, 1000);
+        simulator.simulate(200, 10000);
         System.out.println("Ending Simulation");
 //        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
     }
@@ -37,7 +37,7 @@ public class Main {
     private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) throws Exception{
         // Generate random initial state
         RandomParticleGenerator randomParticleGenerator = new RandomParticleGenerator();
-        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
+        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth/2, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
 		bw.write(worldHeight + " " + worldWidth + " " + particlesAmount + "\n");
