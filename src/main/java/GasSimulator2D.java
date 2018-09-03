@@ -58,6 +58,14 @@ public class GasSimulator2D {
 		return force / w.getSurface();
 	}
 
+	public double getBalance(){
+		int countParticlesInSecondHalf = 0;
+		for (Particle p: particles) {
+			if (p.getX() > this.worldWidth / 2) countParticlesInSecondHalf++;
+		}
+		return (1.0*countParticlesInSecondHalf) / particles.size();
+	}
+
 	public double getTemperature() {
 		return temperature;
 	}
@@ -110,6 +118,7 @@ public class GasSimulator2D {
 
 				statsHolder.addDataPoint(GasMetrics.PRESSURE, currentTime, getPressureMean(currentTime));
 				statsHolder.addDataPoint(GasMetrics.P_DIFF, currentTime, getPressureDifference(currentTime));
+				statsHolder.addDataPoint(GasMetrics.BALANCE, currentTime, getBalance());
 			}
 
 			// Evolucionamos el sistema hasta ese tiempo
@@ -132,6 +141,8 @@ public class GasSimulator2D {
 			}
 		}
 
+		statsHolder.addDataPoint(GasMetrics.TEMPERATURE,currentTime,temperature);
+		statsHolder.addDataPoint(GasMetrics.TIME_TO_EQUILIBRIUM,currentTime,currentTime);
 		System.out.println("Temperature: " + this.getTemperature());
 		for (Obstacle o: obstacles) {
 			System.out.println("Pressure: " + this.getPressure((Wall) o, currentTime));
@@ -146,11 +157,7 @@ public class GasSimulator2D {
 	}
 
 	public boolean isInEquilibrium() {
-		int countParticlesInSecondHalf = 0;
-		for (Particle p: particles) {
-			if (p.getX() > this.worldWidth / 2) countParticlesInSecondHalf++;
-		}
-		return countParticlesInSecondHalf >= particles.size() / 2;
+		return getBalance() > 0.49;
 	}
 
 	public void calculateCollision(PhysicalObject o1, PhysicalObject o2) {

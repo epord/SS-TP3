@@ -28,11 +28,15 @@ public class ExperimentsStatsAgregator<K extends Enum> {
                     .map(holder -> holder.getDataSeries(serie))
                     .collect(Collectors.toList())),serie)
         ).collect(Collectors.toList());
-        
-        timeseriesStats.stream().forEachOrdered( agregatedSeries -> agregatedSeries.addHeaders(stringBuilder,operations));
+
+        System.out.println("Header order");
+        for (AgregatedSeries<K> timeseriesStat : timeseriesStats) {
+            timeseriesStat.addHeaders(stringBuilder, operations);
+        }
         stringBuilder.append("\n");
+        Integer maxTimeseriesLenght = timeseriesStats.stream().mapToInt(AgregatedSeries::size).max().getAsInt();
         if(timeseriesStats.size() > 0){
-            for (int i = 0; i < timeseriesStats.get(0).size(); i++) {
+            for (int i = 0; i < maxTimeseriesLenght; i++) {
                 for (AgregatedSeries<K> agregatedSeries : timeseriesStats) {
                     agregatedSeries.addStats(stringBuilder, operations, i);
                 }
@@ -52,7 +56,7 @@ public class ExperimentsStatsAgregator<K extends Enum> {
                 .mapToDouble(x -> Math.pow(x - mean, 2))
                 .sum();
 
-        return Math.sqrt(standardDeviation / values.size());
+        return Math.sqrt(standardDeviation );
     }
 
     public List<Stats> fillStats(List<List<DataPoint>> timeseries){

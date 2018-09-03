@@ -1,5 +1,6 @@
 package experiments;
 
+import javafx.scene.layout.Pane;
 import utils.Utils;
 
 import java.util.List;
@@ -18,17 +19,24 @@ public class AgregatedSeries<K> {
     }
 
     public StringBuilder addHeaders(StringBuilder sb, List<Operation> operations){
-        operations.stream().forEachOrdered( op -> {
+        for (Operation op : operations) {
             sb.append(series + " " + op + ",");
-        });
+        }
         return sb;
     }
     public StringBuilder addStats(StringBuilder sb, List<Operation> operations, Integer index){
-        if(index < 0 || index > seriesData.size()){
-            throw new IllegalStateException("cant add stats, missing data");
+        for (Operation op : operations) {
+            if(index < 0 || index >= seriesData.size()){
+                sb.append("-,");
+            } else {
+                sb.append(Utils.formatDouble(seriesData.get(index).getValueByOperation(op)))
+                        .append(",");
+            }
         }
-        operations.stream().forEachOrdered( op -> sb.append(Utils.formatDouble(seriesData.get(index).getValueByOperation(op)))
-                                                    .append(","));
         return sb;
+    }
+
+    public K getSeriesType(){
+        return series;
     }
 }

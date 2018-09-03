@@ -7,39 +7,22 @@ public class Stats {
     private Double mean;
     private DataPoint median;
 
-    public DataPoint getMax() {
-        return max;
-    }
-
-    public Double getStd() {
-        return std;
-    }
-
-    public Double getMean() {
-        return mean;
-    }
-
-    public DataPoint getMedian() {
-        return median;
-    }
-
-    public DataPoint getMin() {
-        return min;
-
-    }
-
     public Double getValueByOperation(Operation operation){
         switch (operation){
             case MIN:
-                return getMin().getValue();
+                return min.getValue();
             case MAX:
-                return getMax().getValue();
+                return max.getValue();
             case MEAN:
-                return getMean();
+                return mean;
             case STD:
-                return getStd();
+                return std;
             case MEDIAN:
-                return getMedian().getValue();
+                return median.getValue();
+            case STD_LOW:
+                return mean - std;
+            case STD_HIGH:
+                return mean + std;
         }
         throw new IllegalStateException("No operation found");
     }
