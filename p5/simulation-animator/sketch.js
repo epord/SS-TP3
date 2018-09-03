@@ -8,7 +8,7 @@ var worldSize;
 var canvasSize;
 var particles;
 var particles_count;
-var frames_count = 499;
+var frames_count = 3406;
 var time_checkpoint;
 
 function setup() {
@@ -39,7 +39,7 @@ function setup() {
 
 var frame = 0;
 var time_between_frames = 0;
-var frame_skip = 8;
+var frame_skip = 1;
 function draw() {
   // put drawing code here
   background(200);
