@@ -5,14 +5,14 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 1000, 0.15, 0.15, 3.0, 5.0);
+        generateRandomWorld("p5/simulation-animator/random.txt", 24, 9, 500, 0.15, 0.15, 3.0, 5.0);
 
 		File savedWorld = new File("p5/simulation-animator/random.txt");
 		System.out.println(savedWorld.getAbsolutePath());
         GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
         System.out.println("Starting Simulation");
-        simulator.simulate(100, 1000);
+        simulator.simulate(100, 5000);
         System.out.println("Ending Simulation");
 //        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
     }
@@ -31,7 +31,7 @@ public class Main {
                     Double.parseDouble(l[3]), Double.parseDouble(l[4])));
         }
 
-        return new GasSimulator2D(particles, worldHeight, worldWidth);
+        return new GasSimulator2D(particles, worldWidth, worldHeight);
     }
 
     private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) throws Exception{

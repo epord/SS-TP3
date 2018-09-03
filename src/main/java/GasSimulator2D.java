@@ -42,7 +42,7 @@ public class GasSimulator2D {
 		int frameCount = 0;
 		int printedFrameCount = 0;
 		while(currentTime < timeLimit) {
-			System.out.println(currentTime * 100 / timeLimit);
+//			System.out.println(currentTime * 100 / timeLimit);
 			// Imprimimos estado del mundo
 			if (frameCount % frameSkipping == 0) {
 				FileManager.appendParticlesTo("p5/simulation-animator/output.txt", particles, currentTime);
