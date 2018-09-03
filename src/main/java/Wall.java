@@ -3,12 +3,14 @@ public abstract class Wall implements Obstacle {
 
     private Double x1, y1, x2, y2;
     protected double cumulatedImpulse = 0;
+    private Boolean doubleSided;
 
-    public Wall(double x1, double y1, double x2, double y2) {
+    public Wall(double x1, double y1, double x2, double y2, Boolean doubleSided) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
+        this.doubleSided = doubleSided;
     }
 
 	public double getCumulatedImpulse() {
@@ -17,8 +19,8 @@ public abstract class Wall implements Obstacle {
 
 	public abstract void addImpulse(Particle p);
 
-	public double getLength() {
-    	return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+	public double getSurface() {
+    	return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))*(doubleSided?2:1);
 	}
 
 	public Double getX1() {

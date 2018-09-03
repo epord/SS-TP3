@@ -1,8 +1,10 @@
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import experiments.ExperimentStatsHolder;
+import experiments.ExperimentsStatsAgregator;
 import org.la4j.vector.dense.BasicVector;
 
 public class GasSimulator2D {
@@ -11,9 +13,10 @@ public class GasSimulator2D {
 	private Collection<Obstacle> obstacles;
 	private double worldWidth;
 	private double worldHeight;
-	private double frameSkipping = 10; // will print every N frames
 	private double temperature = 0;
-	private boolean simulationEnded = false;
+	private String outFile = "p5/simulation-animator/output.txt";
+	private ExperimentStatsHolder<GasMetrics> statsHolder;
+	private Double simulationStaleTime = 0.0;
 
 	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
 		this.particles = particles;
@@ -21,31 +24,45 @@ public class GasSimulator2D {
 		this.worldHeight = worldHeight;
 		// generate obstacles
 		this.obstacles = new LinkedList<>();
-		this.obstacles.add(new HorizontalWall(0, worldWidth, 0));
-		this.obstacles.add(new HorizontalWall(0, worldWidth, worldHeight));
-		this.obstacles.add(new VerticalWall(0, 0, worldHeight));
-		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight));
+		this.obstacles.add(new HorizontalWall(0, worldWidth, 0,false));
+		this.obstacles.add(new HorizontalWall(0, worldWidth, worldHeight,false));
+		this.obstacles.add(new VerticalWall(0, 0, worldHeight,false));
+		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight,false));
 //		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/2));
-		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3));
-		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight));
+		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3,true));
+		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight,true));
 		// calculate temperature
 		for (Particle p: particles) {
 			temperature += Math.pow(p.getVelocityNorm(), 2);
 		}
 		temperature /= particles.size();
+		statsHolder = new ExperimentStatsHolder<>();
+	}
 
+	public Double getPressureMean(Double timeElapsed){
+		Double sum = 0.0;
+		for (Obstacle o: obstacles) {
+			sum += getPressure((Wall) o,timeElapsed);
+		}
+		return sum/obstacles.size();
+	}
+
+	public Double getPressureDifference(Double timeElapsed){
+		List<Double> pressures = obstacles.stream()
+				.map( o -> getPressure((Wall) o,timeElapsed)).collect(Collectors.toList());
+		return ExperimentsStatsAgregator.getStandardDeviation(pressures);
 	}
 
 	public double getPressure(Wall w, double timeElapsed) {
 		double force = w.getCumulatedImpulse() / timeElapsed;
-		return force / w.getLength();
+		return force / w.getSurface();
 	}
 
 	public double getTemperature() {
 		return temperature;
 	}
 
-	public void simulate() throws Exception{
+	public ExperimentStatsHolder<GasMetrics> simulate(Double timeLimit, Double timeStep, Integer frameLimit, Boolean equilibriumLimit) throws Exception{
 		//Creamos la priority queue con todos los tiempos de colision
 		PriorityQueue<Collision> collisions = new PriorityQueue<>(Comparator.comparing(Collision::getCollisionTime));
 		Map<Particle, Set<Collision>> particleCollisions = new HashMap<>();
@@ -66,75 +83,66 @@ public class GasSimulator2D {
 		bw = new BufferedWriter(new FileWriter("p5/simulation-animator/output.txt"));
 		bw.write(worldWidth + " " + worldHeight + " " + particles.size() + "\n");
 		bw.close();
-		int frameCount = 0;
-		int printedFrameCount = 0;
+		int printedFrameCount = 1;
+		Double nextFrameTime = printedFrameCount * timeStep;
+		writeParticlesToFile(particles,currentTime);
 
 		// Simulation Loop
-		while (!isInEquilibrium()) {
-			// Imprimimos estado del mundo
-			if (frameCount % frameSkipping == 0) {
-				FileManager.appendParticlesTo("p5/simulation-animator/output.txt", particles, currentTime);
+		while (printedFrameCount < frameLimit && currentTime < timeLimit && (!equilibriumLimit || currentTime < simulationStaleTime + timeStep *10)) {
+			// Tomamos la colision de menor tiempo
+			Collision collision = collisions.poll();
+			Double nextCollisionTime = collision.getCollisionTime();
+
+			Double deltaToNextCollision = nextCollisionTime - currentTime;
+
+			//Mientras el tiempo de la proxima colision sea menor al tiempo de frame
+			while (nextCollisionTime > nextFrameTime){
+				//Obtener el delta hasta cuando habria que dibujar el next frame
+				Double deltaToNextFrame = nextFrameTime - currentTime;
+				evolveSystem(particles,deltaToNextFrame);
+				writeParticlesToFile(particles,currentTime);
+
+				currentTime = nextFrameTime;
+				deltaToNextCollision = nextCollisionTime - currentTime;
+
 				printedFrameCount++;
+				nextFrameTime = printedFrameCount * timeStep;
+
+				statsHolder.addDataPoint(GasMetrics.PRESSURE, currentTime, getPressureMean(currentTime));
+				statsHolder.addDataPoint(GasMetrics.P_DIFF, currentTime, getPressureDifference(currentTime));
 			}
-			frameCount++;
-
-			// Tomamos la colision de menor tiempo
-			Collision collision = collisions.poll();
-			Double newTime = collision.getCollisionTime();
-
-			Double deltaT = newTime - currentTime;
 
 			// Evolucionamos el sistema hasta ese tiempo
-			evolveSystem(particles, deltaT);
+			evolveSystem(particles, deltaToNextCollision);
 
 			// Cambiamos la / las particulas según la colision originada
 			calculateCollision(collision.getObject1(), collision.getObject2());
 
 			//Ahora el tiempo actual es el nuevo
-			currentTime = newTime;
+			currentTime = nextCollisionTime;
 
 			// Calculamos nuevamente las colisiones de aquellas partículas que chocaron, con todas las demás y con las paredes.
 			List<Particle> collisionedParticles = new LinkedList<>();
 			if (collision.getObject1() instanceof Particle) collisionedParticles.add((Particle) collision.getObject1());
 			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
 			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
+
+			if(!isInEquilibrium()){
+				simulationStaleTime = currentTime;
+			}
 		}
-		simulationEnded = true;
-		System.out.println("Simulation Ended");
-
-		System.out.println("Starting Measures");
-		double measuresStartTime = currentTime;
-		double measuresDuration = 10;
-		// Calculations after equilimbrium
-		while (currentTime - measuresStartTime < measuresDuration) {
-			// Tomamos la colision de menor tiempo
-			Collision collision = collisions.poll();
-			Double newTime = collision.getCollisionTime();
-
-			Double deltaT = newTime - currentTime;
-
-			// Evolucionamos el sistema hasta ese tiempo
-			evolveSystem(particles, deltaT);
-
-			// Cambiamos la / las particulas según la colision originada
-			calculateCollision(collision.getObject1(), collision.getObject2());
-
-			//Ahora el tiempo actual es el nuevo
-			currentTime = newTime;
-
-			// Calculamos nuevamente las colisiones de aquellas partículas que chocaron, con todas las demás y con las paredes.
-			List<Particle> collisionedParticles = new LinkedList<>();
-			if (collision.getObject1() instanceof Particle) collisionedParticles.add((Particle) collision.getObject1());
-			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
-			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
-		}
-		System.out.println("Ending Measures");
 
 		System.out.println("Temperature: " + this.getTemperature());
 		for (Obstacle o: obstacles) {
-			System.out.println("Pressure: " + this.getPressure((Wall) o, measuresStartTime));
+			System.out.println("Pressure: " + this.getPressure((Wall) o, currentTime));
 		}
 		System.out.println("Printed frames: " + printedFrameCount);
+		System.out.println("Total duration: " + currentTime);
+		return statsHolder;
+	}
+
+	public void writeParticlesToFile(Collection<Particle> particles, Double time){
+		FileManager.appendParticlesTo(outFile, particles, time);
 	}
 
 	public boolean isInEquilibrium() {
@@ -156,7 +164,7 @@ public class GasSimulator2D {
 	}
 
 	public void calculateCollision(Particle p1, Wall w) {
-		if (simulationEnded) w.addImpulse(p1);
+		w.addImpulse(p1);
 		if (w.isHorizontal()) {
 			p1.setVelocity(new BasicVector(new double[]{p1.getVelocity().get(0), -p1.getVelocity().get(1)}));
 		} else {

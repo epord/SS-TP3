@@ -4,8 +4,8 @@
 public class VerticalWall extends Wall {
 
 
-	public VerticalWall(double x, double y1, double y2) {
-		super(x, y1, x, y2);
+	public VerticalWall(double x, double y1, double y2, Boolean doubleSided) {
+		super(x, y1, x, y2, doubleSided);
 	}
 
 	public double getX() {

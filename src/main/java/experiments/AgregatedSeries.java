@@ -1,5 +1,7 @@
 package experiments;
 
+import utils.Utils;
+
 import java.util.List;
 
 public class AgregatedSeries<K> {
@@ -25,7 +27,7 @@ public class AgregatedSeries<K> {
         if(index < 0 || index > seriesData.size()){
             throw new IllegalStateException("cant add stats, missing data");
         }
-        operations.stream().forEachOrdered( op -> sb.append(seriesData.get(index).getValueByOperation(op))
+        operations.stream().forEachOrdered( op -> sb.append(Utils.formatDouble(seriesData.get(index).getValueByOperation(op)))
                                                     .append(","));
         return sb;
     }

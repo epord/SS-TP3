@@ -42,12 +42,17 @@ public class ExperimentsStatsAgregator<K extends Enum> {
         return stringBuilder;
     }
 
-    public static Double getStandardDeviation(List<Double> colors, Double mean) {
-        Double standardDeviation = colors.stream()
+    public static Double getStandardDeviation(List<Double> values) {
+        Double mean = values.stream().mapToDouble( x -> x).average().getAsDouble();
+        return getStandardDeviation(values,mean);
+    }
+
+    public static Double getStandardDeviation(List<Double> values, Double mean) {
+        Double standardDeviation = values.stream()
                 .mapToDouble(x -> Math.pow(x - mean, 2))
                 .sum();
 
-        return Math.sqrt(standardDeviation / colors.size());
+        return Math.sqrt(standardDeviation / values.size());
     }
 
     public List<Stats> fillStats(List<List<DataPoint>> timeseries){

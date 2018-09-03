@@ -1,20 +1,32 @@
+import experiments.ExperimentStatsHolder;
+import experiments.ExperimentsStatsAgregator;
+import experiments.Operation;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 200, 0.15, 0.15, 1.0, 2.0);
+        Integer simulations = 5;
+        ExperimentsStatsAgregator<GasMetrics> agregator = new ExperimentsStatsAgregator<>();
+        for (int i = 0; i < simulations; i++) {
+            generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 50, 0.15, 0.15, 1.0, 2.0);
 
-		File savedWorld = new File("p5/simulation-animator/random.txt");
-		System.out.println(savedWorld.getAbsolutePath());
-        GasSimulator2D simulator = getWorldFromFile(savedWorld);
+            File savedWorld = new File("p5/simulation-animator/random.txt");
+            System.out.println(savedWorld.getAbsolutePath());
+            GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
-        System.out.println("Starting Simulation");
-        simulator.simulate();
-        System.out.println("Ending Simulation");
-//        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
+            System.out.println("Starting Simulation: " + i);
+            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(300.0, 0.01,10000,true);
+            agregator.addStatsHolder(holder);
+            System.out.println("Ending Simulation: " + i);
+        }
+
+        StringBuilder stringBuilder = agregator.buildStatsOutput(Arrays.asList(Operation.MIN, Operation.MAX, Operation.MEAN));
+        System.out.println(stringBuilder.toString());
     }
 
     private static GasSimulator2D getWorldFromFile(File file) throws Exception {
