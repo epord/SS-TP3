@@ -21,6 +21,11 @@ public class HorizontalWall extends Wall {
 	}
 
 	@Override
+	public void addImpulse(Particle p) {
+		super.cumulatedImpulse += Math.abs(p.getVelocity().get(0)) * 2;
+	}
+
+	@Override
 	public boolean isHorizontal() {
 		return true;
 	}

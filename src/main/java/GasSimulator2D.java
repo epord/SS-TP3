@@ -12,6 +12,7 @@ public class GasSimulator2D {
 	private double worldWidth;
 	private double worldHeight;
 	private double frameSkipping = 10; // will print every N frames
+	private double temperature = 0;
 
 	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
 		this.particles = particles;
@@ -23,7 +24,21 @@ public class GasSimulator2D {
 		this.obstacles.add(new HorizontalWall(0, worldWidth, worldHeight));
 		this.obstacles.add(new VerticalWall(0, 0, worldHeight));
 		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight));
+		// calculate temperature
+		for (Particle p: particles) {
+			temperature += Math.pow(p.getVelocityNorm(), 2);
+		}
+		temperature /= particles.size();
 
+	}
+
+	public double getPressure(Wall w, double timeElapsed) {
+		double force = w.getCumulatedImpulse() / timeElapsed;
+		return force / w.getLength();
+	}
+
+	public double getTemperature() {
+		return temperature;
 	}
 
 	public void simulate(double timeLimit, double frameLimit) throws Exception{
@@ -73,6 +88,12 @@ public class GasSimulator2D {
 			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
 			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
 		}
+
+		System.out.println("Temperature: " + this.getTemperature());
+		for (Obstacle o: obstacles) {
+			System.out.println("Pressure: " + this.getPressure((Wall) o, currentTime));
+		}
+		System.out.println("Printed frames: " + printedFrameCount);
 	}
 
 	public void calculateCollision(PhysicalObject o1, PhysicalObject o2) {
@@ -86,6 +107,7 @@ public class GasSimulator2D {
 	}
 
 	public void calculateCollision(Particle p1, Wall w) {
+		w.addImpulse(p1);
 		if (w.isHorizontal()) {
 			p1.setVelocity(new BasicVector(new double[]{p1.getVelocity().get(0), -p1.getVelocity().get(1)}));
 		} else {

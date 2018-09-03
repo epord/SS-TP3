@@ -80,7 +80,12 @@ public class ParticleImpl implements Particle{
         return -1 * (VdotR + Math.sqrt(d))/VdotV;
     }
 
-	@Override
+    @Override
+    public double getVelocityNorm() {
+        return velocity.norm();
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (!(obj instanceof Particle)) return false;
