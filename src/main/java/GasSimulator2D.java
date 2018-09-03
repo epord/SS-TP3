@@ -24,6 +24,9 @@ public class GasSimulator2D {
 		this.obstacles.add(new HorizontalWall(0, worldWidth, worldHeight));
 		this.obstacles.add(new VerticalWall(0, 0, worldHeight));
 		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight));
+//		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/2));
+		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3));
+		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight/3));
 		// calculate temperature
 		for (Particle p: particles) {
 			temperature += Math.pow(p.getVelocityNorm(), 2);
