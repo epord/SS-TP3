@@ -13,6 +13,7 @@ public class GasSimulator2D {
 	private double worldHeight;
 	private double frameSkipping = 10; // will print every N frames
 	private double temperature = 0;
+	private boolean simulationEnded = false;
 
 	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
 		this.particles = particles;
@@ -25,8 +26,8 @@ public class GasSimulator2D {
 		this.obstacles.add(new VerticalWall(0, 0, worldHeight));
 		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight));
 //		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/2));
-		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight*4/10));
-		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*6/10, worldHeight));
+		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3));
+		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight));
 		// calculate temperature
 		for (Particle p: particles) {
 			temperature += Math.pow(p.getVelocityNorm(), 2);
@@ -44,7 +45,7 @@ public class GasSimulator2D {
 		return temperature;
 	}
 
-	public void simulate(double timeLimit, double frameLimit) throws Exception{
+	public void simulate() throws Exception{
 		//Creamos la priority queue con todos los tiempos de colision
 		PriorityQueue<Collision> collisions = new PriorityQueue<>(Comparator.comparing(Collision::getCollisionTime));
 		Map<Particle, Set<Collision>> particleCollisions = new HashMap<>();
@@ -59,19 +60,18 @@ public class GasSimulator2D {
 		bw.close();
 		int frameCount = 0;
 		int printedFrameCount = 0;
-		while(currentTime < timeLimit) {
-//			System.out.println(currentTime * 100 / timeLimit);
+
+		// Simulation Loop
+		while (!isInEquilibrium()) {
 			// Imprimimos estado del mundo
 			if (frameCount % frameSkipping == 0) {
 				FileManager.appendParticlesTo("p5/simulation-animator/output.txt", particles, currentTime);
 				printedFrameCount++;
 			}
 			frameCount++;
-			if (frameLimit == printedFrameCount) break;
 
 			// Tomamos la colision de menor tiempo
 			Collision collision = collisions.poll();
-//			System.out.println("Collision: " + collision.toString());
 			Double newTime = collision.getCollisionTime();
 
 			Double deltaT = newTime - currentTime;
@@ -91,12 +91,50 @@ public class GasSimulator2D {
 			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
 			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
 		}
+		simulationEnded = true;
+		System.out.println("Simulation Ended");
+
+		System.out.println("Starting Measures");
+		double measuresStartTime = currentTime;
+		double measuresDuration = 50;
+		// Calculations after equilimbrium
+		while (currentTime - measuresStartTime < measuresDuration) {
+			// Tomamos la colision de menor tiempo
+			Collision collision = collisions.poll();
+			Double newTime = collision.getCollisionTime();
+
+			Double deltaT = newTime - currentTime;
+
+			// Evolucionamos el sistema hasta ese tiempo
+			evolveSystem(particles, deltaT);
+
+			// Cambiamos la / las particulas según la colision originada
+			calculateCollision(collision.getObject1(), collision.getObject2());
+
+			//Ahora el tiempo actual es el nuevo
+			currentTime = newTime;
+
+			// Calculamos nuevamente las colisiones de aquellas partículas que chocaron, con todas las demás y con las paredes.
+			List<Particle> collisionedParticles = new LinkedList<>();
+			if (collision.getObject1() instanceof Particle) collisionedParticles.add((Particle) collision.getObject1());
+			if (collision.getObject2() instanceof Particle) collisionedParticles.add((Particle) collision.getObject2());
+			CollisionsHandler.updateCollisions(particles, obstacles, collisions, particleCollisions, collisionedParticles, currentTime);
+		}
+		System.out.println("Ending Measures");
 
 		System.out.println("Temperature: " + this.getTemperature());
 		for (Obstacle o: obstacles) {
-			System.out.println("Pressure: " + this.getPressure((Wall) o, currentTime));
+			System.out.println("Pressure: " + this.getPressure((Wall) o, measuresStartTime));
 		}
 		System.out.println("Printed frames: " + printedFrameCount);
+	}
+
+	public boolean isInEquilibrium() {
+		int countParticlesInSecondHalf = 0;
+		for (Particle p: particles) {
+			if (p.getX() > this.worldWidth / 2) countParticlesInSecondHalf++;
+		}
+		return countParticlesInSecondHalf >= particles.size() / 2;
 	}
 
 	public void calculateCollision(PhysicalObject o1, PhysicalObject o2) {
@@ -110,7 +148,7 @@ public class GasSimulator2D {
 	}
 
 	public void calculateCollision(Particle p1, Wall w) {
-		w.addImpulse(p1);
+		if (simulationEnded) w.addImpulse(p1);
 		if (w.isHorizontal()) {
 			p1.setVelocity(new BasicVector(new double[]{p1.getVelocity().get(0), -p1.getVelocity().get(1)}));
 		} else {
