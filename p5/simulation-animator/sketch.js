@@ -1,6 +1,8 @@
 var file;
+var obstaclesFile;
 function preload() {
-  file = loadStrings('output.txt');
+    file = loadStrings('output.txt');
+    obstaclesFile = loadStrings('simulationInfo.txt');
 }
 
 
@@ -8,12 +10,20 @@ var worldSize;
 var canvasSize;
 var particles;
 var particles_count;
-var frames_count = 4999;
+var walls;
+var frames_count = 4864;
 var time_checkpoint;
 var minSpeed =  null;
-var maxSpeed = null
+var maxSpeed = null;
 
 function setup() {
+    walls = new Array(parseInt(obstaclesFile[0]));
+    for (var i = 0; i < parseInt(obstaclesFile[0]); i++) {
+        walls[i] = {x1: parseFloat(obstaclesFile[i+1].split(" ")[0]), y1: parseFloat(obstaclesFile[i+1].split(" ")[1]),
+                    x2: parseFloat(obstaclesFile[i+1].split(" ")[2]), y2: parseFloat(obstaclesFile[i+1].split(" ")[3])}
+    }
+    console.log(walls)
+
   // put setup code here
   worldSize = {height: parseFloat(file[0].split(" ")[1]), width: parseFloat(file[0].split(" ")[0])};
   if (worldSize.height > worldSize.width) {
@@ -48,11 +58,15 @@ function setup() {
 
 var frame = 0;
 var time_between_frames = 0;
-var frame_skip = 5;
+var frame_skip = 3;
 function draw() {
   // put drawing code here
   background(200);
 
+    for (var i = 0; i < walls.length; i++) {
+        drawWall(walls[i]);
+    }
+  
   for (var j = 0; j < particles_count; j++) {
       drawParticle(particles[frame][j].x, particles[frame][j].y, particles[frame][j].radius, particles[frame][j].speed)
   }
@@ -69,4 +83,11 @@ function drawParticle(x, y, radius, speed) {
   fill(255, 255-redIntensity, 255-redIntensity);
   ellipse(x * (canvasSize.width / worldSize.width), y * (canvasSize.height / worldSize.height),
       radius * 2 * (canvasSize.width / worldSize.width), radius * 2 * (canvasSize.height / worldSize.height));
+}
+
+function drawWall(wall) {
+    color(0);
+    var scaleX = (canvasSize.width / worldSize.width);
+    var scaleY = (canvasSize.height / worldSize.height);
+    line(wall.x1 * scaleX, wall.y1 * scaleY, wall.x2 * scaleX, wall.y2 * scaleY);
 }
