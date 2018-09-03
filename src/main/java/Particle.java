@@ -12,4 +12,5 @@ public interface Particle extends PhysicalObject {
     BasicVector getVelocity();
     void setVelocity(BasicVector v);
     Double getCollisionTime(Particle p);
+    double getVelocityNorm();
 }

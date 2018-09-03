@@ -31,7 +31,7 @@ public class Main {
                     Double.parseDouble(l[3]), Double.parseDouble(l[4])));
         }
 
-        return new GasSimulator2D(particles, worldHeight, worldWidth);
+        return new GasSimulator2D(particles, worldWidth, worldHeight);
     }
 
     private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) throws Exception{
