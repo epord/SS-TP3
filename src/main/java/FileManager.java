@@ -23,21 +23,12 @@ public class FileManager {
         }
     }
     public static void appendParticlesTo(File file, Collection<Particle> particles, Double time) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file,true);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         FileWriter bw = new FileWriter(file,true);
         StringBuilder sb = new StringBuilder();
-
-//        sb.append("STATS,TIME:").append(time.toString(), 0, 3).append("\n");
-//        System.out.println(particles.size());
         bw.write(sb.toString());
         for(Particle particle : particles) {
             sb.setLength(0);
-            sb.append(particle.getId())
+            sb.append(particle. getId())
             .append(",")
             .append(Utils.formatDouble(particle.getX()))
             .append(",")
@@ -49,7 +40,6 @@ public class FileManager {
             .append(",")
             .append(Utils.formatDouble(particle.getRadius()))
             .append("\n");
-//            System.out.println("appended:"+particle.getId());
             bw.write(sb.toString());
         }
         bw.close();

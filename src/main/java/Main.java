@@ -5,7 +5,7 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 400, 0.15, 0.15, 3.0, 5.0);
+        generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 200, 0.15, 0.15, 1.0, 2.0);
 
 		File savedWorld = new File("p5/simulation-animator/random.txt");
 		System.out.println(savedWorld.getAbsolutePath());
