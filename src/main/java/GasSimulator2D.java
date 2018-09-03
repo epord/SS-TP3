@@ -25,8 +25,8 @@ public class GasSimulator2D {
 		this.obstacles.add(new VerticalWall(0, 0, worldHeight));
 		this.obstacles.add(new VerticalWall(worldWidth, 0, worldHeight));
 //		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/2));
-		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight/3));
-		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight/3));
+		this.obstacles.add(new VerticalWall(worldWidth/2, 0, worldHeight*4/10));
+		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*6/10, worldHeight));
 		// calculate temperature
 		for (Particle p: particles) {
 			temperature += Math.pow(p.getVelocityNorm(), 2);
@@ -132,6 +132,13 @@ public class GasSimulator2D {
 				collisionMatrix[1][0] * p1.getVelocity().get(0) + collisionMatrix[1][1] * p1.getVelocity().get(1)
 		});
 		p1.setVelocity(newVelocity);
+
+		alpha = Math.atan((p1.getY() - p2.getY()) / (p1.getX() - p2.getX()));
+		collisionMatrix = new double[2][2];
+		collisionMatrix[0][0] = -Cn * Math.pow(Math.cos(alpha), 2) + Ct * Math.pow(Math.sin(alpha), 2);
+		collisionMatrix[0][1] = -(Cn + Ct) * Math.sin(alpha) * Math.cos(alpha);
+		collisionMatrix[1][0] = -(Cn + Ct) * Math.sin(alpha) * Math.cos(alpha);
+		collisionMatrix[1][1] = -Cn * Math.pow(Math.sin(alpha), 2) + Ct * Math.pow(Math.cos(alpha), 2);
 
 		newVelocity = new BasicVector(new double[]{
 				collisionMatrix[0][0] * p2.getVelocity().get(0) + collisionMatrix[0][1] * p2.getVelocity().get(1),

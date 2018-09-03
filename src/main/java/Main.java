@@ -12,7 +12,7 @@ public class Main {
         GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
         System.out.println("Starting Simulation");
-        simulator.simulate(200, 10000);
+        simulator.simulate(200, 1000);
         System.out.println("Ending Simulation");
 //        Particle p1 = new ParticleImpl(0, 0, 1, 1, 1, 0);
     }
