@@ -15,13 +15,13 @@ public class MetricsTest {
         firstResults.addDataPoint(GasMetrics.DY_PRESSURE,1.0,0.0);
         firstResults.addDataPoint(GasMetrics.DY_PRESSURE,1.0,50.0);
         firstResults.addDataPoint(GasMetrics.DY_PRESSURE,1.0,-1.0);
-        firstResults.addDataPoint(GasMetrics.TEMPERATURE,1.0,-1.0);
+        firstResults.addDataPoint(GasMetrics.EQ_TEMPERATURE,1.0,-1.0);
 
         ExperimentStatsHolder<GasMetrics> secondResults = new ExperimentStatsHolder<>();
         secondResults.addDataPoint(GasMetrics.DY_PRESSURE,1.0,0.0);
         secondResults.addDataPoint(GasMetrics.DY_PRESSURE,1.0,25.0);
         secondResults.addDataPoint(GasMetrics.DY_PRESSURE,1.0,1.0);
-        secondResults.addDataPoint(GasMetrics.TEMPERATURE,1.0,1.0);
+        secondResults.addDataPoint(GasMetrics.EQ_TEMPERATURE,1.0,1.0);
 
         ExperimentsStatsAgregator<GasMetrics> experimentsStatsAgregator = new ExperimentsStatsAgregator<>();
         experimentsStatsAgregator.addStatsHolder(firstResults);

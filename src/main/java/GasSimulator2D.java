@@ -17,6 +17,7 @@ public class GasSimulator2D {
 	private String outFile = "p5/simulation-animator/output.txt";
 	private ExperimentStatsHolder<GasMetrics> statsHolder;
 	private Double simulationStaleTime = 0.0;
+	private static Integer framesToEstablishEquilibrium = 10;
 
 	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
 		this.particles = particles;
@@ -37,7 +38,7 @@ public class GasSimulator2D {
 		}
 		temperature /= particles.size();
 		//Multiply by boltzmans constant
-		temperature *= 1.38064852e10-23;
+//		temperature *= 1.38064852e10-23;
 		statsHolder = new ExperimentStatsHolder<>();
 	}
 
@@ -97,7 +98,9 @@ public class GasSimulator2D {
 		writeParticlesToFile(particles,currentTime);
 
 		// Simulation Loop
-		while (printedFrameCount < frameLimit && currentTime < timeLimit && (!equilibriumLimit || currentTime < simulationStaleTime + timeStep *10)) {
+		while ( printedFrameCount < frameLimit &&
+				currentTime < timeLimit &&
+				(!equilibriumLimit || currentTime < simulationStaleTime + timeStep * framesToEstablishEquilibrium)) {
 			// Tomamos la colision de menor tiempo
 			Collision collision = collisions.poll();
 			Double nextCollisionTime = collision.getCollisionTime();
@@ -116,6 +119,7 @@ public class GasSimulator2D {
 
 				printedFrameCount++;
 				nextFrameTime = printedFrameCount * timeStep;
+
 
 				statsHolder.addDataPoint(GasMetrics.DY_PRESSURE, currentTime, getPressureMean(currentTime));
 				statsHolder.addDataPoint(GasMetrics.P_DIFF, currentTime, getPressureDifference(currentTime));
@@ -141,9 +145,11 @@ public class GasSimulator2D {
 				simulationStaleTime = currentTime;
 			}
 		}
+
+		//Change current time to be the last time that had pressure data
 		currentTime = (printedFrameCount - 1)*timeStep;
-		statsHolder.addDataPoint(GasMetrics.TEMPERATURE,currentTime,temperature);
-		statsHolder.addDataPoint(GasMetrics.EQ_TIME,currentTime,currentTime);
+		statsHolder.addDataPoint(GasMetrics.EQ_TEMPERATURE,currentTime,temperature);
+		statsHolder.addDataPoint(GasMetrics.EQ_TIME,currentTime,simulationStaleTime);
 		statsHolder.addDataPoint(GasMetrics.EQ_PRESSURE,currentTime,getPressureMean(currentTime));
 
 		System.out.println("Temperature: " + this.getTemperature());

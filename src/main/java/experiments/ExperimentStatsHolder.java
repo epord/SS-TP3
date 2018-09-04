@@ -22,6 +22,9 @@ public class ExperimentStatsHolder<K extends Enum> {
     }
 
     public List<DataPoint> getDataSeries(K serie) {
+        if(!dataSeries.containsKey(serie)){
+            return Collections.emptyList();
+        }
         return dataSeries.get(serie);
     }
 }
