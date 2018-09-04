@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Boolean pressureTemperature = true;
-        if(pressureTemperature){
+        if (pressureTemperature) {
             //Run simulation for pressure temperature
             runSimulationForPressureTemperature();
         } else {
@@ -20,36 +20,36 @@ public class Main {
         }
     }
 
-    private static void runSimulation()throws Exception{
+    private static void runSimulation() throws Exception {
         Integer simulations = 1;
         ExperimentsStatsAgregator<GasMetrics> agregator = new ExperimentsStatsAgregator<>();
         for (int i = 0; i < simulations; i++) {
-            generateRandomWorld("p5/simulation-animator/random.txt", 9, 24, 500, 0.15, 0.15, 1.0);
+            generateRandomHalfWorld("p5/simulation-animator/random.txt", 9, 24, 500, 0.15, 0.15, 1.0);
 
             File savedWorld = new File("p5/simulation-animator/random.txt");
             System.out.println(savedWorld.getAbsolutePath());
             GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
             System.out.println("Starting Simulation: " + i);
-            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(500.0, 1.0,10000,false);
+            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(500.0, 1.0, 10000, false);
             agregator.addStatsHolder(holder);
             System.out.println("Ending Simulation: " + i);
         }
 
         StringBuilder stringBuilder = agregator.buildStatsOutput(Arrays.asList(Operation.STD_LOW, Operation.MEAN, Operation.STD_HIGH, Operation.STD));
-        FileManager.writeString("output.csv",stringBuilder.toString());
+        FileManager.writeString("output.csv", stringBuilder.toString());
         System.out.println(stringBuilder.toString());
     }
 
     private static void runSimulationForPressureTemperature() throws Exception {
         Integer simulations = 5;
-        Integer speedIncrements = 5;
+        Integer speedIncrements = 15;
         ExperimentsStatsAgregator<GasMetrics> agregator = new ExperimentsStatsAgregator<>();
         for (int i = 0; i < simulations; i++) {
             ExperimentStatsHolder<GasMetrics> pressureTemperatureHolder = new ExperimentStatsHolder<>();
             for (int j = 0; j < speedIncrements; j++) {
-                Double speedModule = 0.5 + j*0.1;
-                generateRandomWorld("p5/simulation-animator/random.txt", 9, 24, 300, 0.15, 0.15,  speedModule);
+                Double speedModule = 0.5 + j * 0.1;
+                generateRandomWorld("p5/simulation-animator/random.txt", 9, 24, 300, 0.15, 0.15, speedModule);
 
                 File savedWorld = new File("p5/simulation-animator/random.txt");
                 System.out.println(savedWorld.getAbsolutePath());
@@ -68,7 +68,7 @@ public class Main {
             agregator.addStatsHolder(pressureTemperatureHolder);
         }
         StringBuilder stringBuilder = agregator.buildStatsOutput(Arrays.asList(Operation.STD_LOW, Operation.MEAN, Operation.STD_HIGH));
-        FileManager.writeString("output.csv",stringBuilder.toString());
+        FileManager.writeString("output.csv", stringBuilder.toString());
         System.out.println(stringBuilder.toString());
     }
 
@@ -89,10 +89,14 @@ public class Main {
         return new GasSimulator2D(particles, worldWidth, worldHeight);
     }
 
+    private static void generateRandomHalfWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
+        generateRandomWorld(filename,worldHeight,worldWidth/2,particlesAmount,minRadius,maxRadius,speedModule);
+    }
+
     private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
         // Generate random initial state
         RandomParticleGenerator randomParticleGenerator = new RandomParticleGenerator();
-        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth/2, particlesAmount, minRadius, maxRadius, speedModule);
+        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, speedModule);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
 		bw.write(worldHeight + " " + worldWidth + " " + particlesAmount + "\n");

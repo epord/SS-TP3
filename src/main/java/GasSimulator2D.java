@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import experiments.DataPoint;
 import experiments.ExperimentStatsHolder;
 import experiments.ExperimentsStatsAgregator;
 import org.la4j.vector.dense.BasicVector;
@@ -147,9 +148,12 @@ public class GasSimulator2D {
 
 		//Change current time to be the last time that had pressure data
 		currentTime = (printedFrameCount - 1)*timeStep;
+
+		Double eqAvgPressure = getLastFramesPressureAveraged(statsHolder.getDataSeries(GasMetrics.DY_PRESSURE));
+
 		statsHolder.addDataPoint(GasMetrics.EQ_TEMPERATURE,currentTime,temperature);
 		statsHolder.addDataPoint(GasMetrics.EQ_TIME,currentTime,simulationStaleTime);
-		statsHolder.addDataPoint(GasMetrics.EQ_PRESSURE,currentTime,getPressureMean(currentTime));
+		statsHolder.addDataPoint(GasMetrics.EQ_PRESSURE,currentTime,eqAvgPressure);
 
 		System.out.println("Temperature: " + this.getTemperature());
 		for (Obstacle o: obstacles) {
@@ -158,6 +162,14 @@ public class GasSimulator2D {
 		System.out.println("Printed frames: " + printedFrameCount);
 		System.out.println("Total duration: " + currentTime);
 		return statsHolder;
+	}
+
+	public Double getLastFramesPressureAveraged(List<DataPoint> dy_pressure){
+		Double sum = 0.0;
+		for (int i = dy_pressure.size()-framesToEstablishEquilibrium; i < dy_pressure.size(); i++) {
+			sum += dy_pressure.get(i).getValue();
+		}
+		return sum/framesToEstablishEquilibrium;
 	}
 
 	public void writeParticlesToFile(Collection<Particle> particles, Double time){
