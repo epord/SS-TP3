@@ -27,9 +27,9 @@ function setup() {
   // put setup code here
   worldSize = {height: parseFloat(file[0].split(" ")[1]), width: parseFloat(file[0].split(" ")[0])};
   if (worldSize.height > worldSize.width) {
-    canvasSize = {height: 600, width: 600 * worldSize.width / worldSize.height};
+    canvasSize = {height: 1200, width: 1200 * worldSize.width / worldSize.height};
   } else {
-      canvasSize = {height: 600 * worldSize.height / worldSize.width, width: 600};
+      canvasSize = {height: 1200 * worldSize.height / worldSize.width, width: 1200};
   }
   particles_count = parseInt(file[0].split(" ")[2]);
   particles = new Array(frames_count);
