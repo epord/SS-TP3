@@ -35,5 +35,6 @@ public class MetricsTest {
     @Test
     public void testStandardDeviation(){
         assertEquals(new Double(1.4142135623730951), getStandardDeviation(Arrays.asList(-1.0,1.0)));
+        assertEquals(new Double(1.0), getStandardDeviation(Arrays.asList(0.0,1.0,2.0)));
     }
 }

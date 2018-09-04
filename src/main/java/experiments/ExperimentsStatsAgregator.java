@@ -56,7 +56,7 @@ public class ExperimentsStatsAgregator<K extends Enum> {
                 .mapToDouble(x -> Math.pow(x - mean, 2))
                 .sum();
 
-        return Math.sqrt(standardDeviation );
+        return Math.sqrt(standardDeviation /(values.size()-1));
     }
 
     public List<Stats> fillStats(List<List<DataPoint>> timeseries){
