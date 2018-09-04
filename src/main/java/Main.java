@@ -91,7 +91,16 @@ public class Main {
     }
 
     private static void generateRandomHalfWorld(String filename, double worldHeight, double worldWidth, double openingRatio, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
-        generateRandomWorld(filename,worldHeight,worldWidth/2, openingRatio, particlesAmount,minRadius,maxRadius,speedModule);
+        // Generate random initial state
+        RandomParticleGenerator randomParticleGenerator = new RandomParticleGenerator();
+        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth/2, particlesAmount, minRadius, maxRadius, speedModule);
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
+        bw.write(worldHeight + " " + worldWidth + " " + openingRatio + " " + particlesAmount + "\n");
+        for (Particle p: generatedParticles) {
+            bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + " " + p.getVelocity().get(0) + " " + p.getVelocity().get(1) +  "\n");
+        }
+        bw.close();
     }
 
     private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, double openingRatio, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
