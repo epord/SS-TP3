@@ -10,7 +10,7 @@ import java.util.Collection;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Boolean pressureTemperature = true;
+        Boolean pressureTemperature = false;
         if (pressureTemperature) {
             //Run simulation for pressure temperature
             runSimulationForPressureTemperature();
@@ -24,14 +24,14 @@ public class Main {
         Integer simulations = 1;
         ExperimentsStatsAgregator<GasMetrics> agregator = new ExperimentsStatsAgregator<>();
         for (int i = 0; i < simulations; i++) {
-            generateRandomHalfWorld("p5/simulation-animator/random.txt", 9, 24, 500, 0.15, 0.15, 1.0);
+            generateRandomHalfWorld("p5/simulation-animator/random.txt", 9, 24, 0.5, 200, 0.15, 0.15, 0.1);
 
             File savedWorld = new File("p5/simulation-animator/random.txt");
             System.out.println(savedWorld.getAbsolutePath());
             GasSimulator2D simulator = getWorldFromFile(savedWorld);
 
             System.out.println("Starting Simulation: " + i);
-            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(500.0, 1.0, 10000, false);
+            ExperimentStatsHolder<GasMetrics> holder = simulator.simulate(300.0, 0.1, 10000, false);
             agregator.addStatsHolder(holder);
             System.out.println("Ending Simulation: " + i);
         }
@@ -49,7 +49,7 @@ public class Main {
             ExperimentStatsHolder<GasMetrics> pressureTemperatureHolder = new ExperimentStatsHolder<>();
             for (int j = 0; j < speedIncrements; j++) {
                 Double speedModule = 0.5 + j * 0.1;
-                generateRandomWorld("p5/simulation-animator/random.txt", 9, 24, 300, 0.15, 0.15, speedModule);
+                generateRandomWorld("p5/simulation-animator/random.txt", 9, 24, 0.1,300, 0.15, 0.15, speedModule);
 
                 File savedWorld = new File("p5/simulation-animator/random.txt");
                 System.out.println(savedWorld.getAbsolutePath());
@@ -77,7 +77,8 @@ public class Main {
         String[] l = br.readLine().split(" ");
         Double worldHeight = Double.parseDouble(l[0]);
         Double worldWidth = Double.parseDouble(l[1]);
-        int particleCount = Integer.parseInt(l[2]);
+        Double openingRatio = Double.parseDouble(l[2]);
+        int particleCount = Integer.parseInt(l[3]);
 
         Collection<Particle> particles = new ArrayList<>();
         for (int i = 0; i < particleCount; i++) {
@@ -86,20 +87,20 @@ public class Main {
                     Double.parseDouble(l[3]), Double.parseDouble(l[4])));
         }
 
-        return new GasSimulator2D(particles, worldWidth, worldHeight);
+        return new GasSimulator2D(particles, worldWidth, worldHeight, openingRatio);
     }
 
-    private static void generateRandomHalfWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
-        generateRandomWorld(filename,worldHeight,worldWidth/2,particlesAmount,minRadius,maxRadius,speedModule);
+    private static void generateRandomHalfWorld(String filename, double worldHeight, double worldWidth, double openingRatio, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
+        generateRandomWorld(filename,worldHeight,worldWidth/2, openingRatio, particlesAmount,minRadius,maxRadius,speedModule);
     }
 
-    private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
+    private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, double openingRatio, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
         // Generate random initial state
         RandomParticleGenerator randomParticleGenerator = new RandomParticleGenerator();
         Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth, particlesAmount, minRadius, maxRadius, speedModule);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
-		bw.write(worldHeight + " " + worldWidth + " " + particlesAmount + "\n");
+		bw.write(worldHeight + " " + worldWidth + " " + openingRatio + " " + particlesAmount + "\n");
 		for (Particle p: generatedParticles) {
 			bw.write(p.getX() + " " + p.getY() + " " + p.getRadius() + " " + p.getVelocity().get(0) + " " + p.getVelocity().get(1) +  "\n");
         }

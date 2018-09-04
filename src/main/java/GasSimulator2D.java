@@ -20,7 +20,7 @@ public class GasSimulator2D {
 	private Double simulationStaleTime = 0.0;
 	private static Integer framesToEstablishEquilibrium = 10;
 
-	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight) {
+	public GasSimulator2D(Collection<Particle> particles, double worldWidth, double worldHeight, double openingRatio) {
 		this.particles = particles;
 		this.worldWidth = worldWidth;
 		this.worldHeight = worldHeight;
@@ -37,12 +37,12 @@ public class GasSimulator2D {
 //		this.obstacles.add(new VerticalWall(worldWidth/2, worldHeight*2/3, worldHeight,true));
 
 		// 3D WALLS
-		this.obstacles.add(new VerticalWall(worldWidth*999/2000, 0, worldHeight/3,false));
-		this.obstacles.add(new VerticalWall(worldWidth*1001/2000, 0, worldHeight/3,false));
-		this.obstacles.add(new VerticalWall(worldWidth*999/2000, worldHeight*2/3, worldHeight,false));
-		this.obstacles.add(new VerticalWall(worldWidth*1001/2000, worldHeight*2/3, worldHeight,false));
-		this.obstacles.add(new HorizontalWall(worldWidth*999/2000, worldWidth*1001/2000, worldHeight/3, false));
-		this.obstacles.add(new HorizontalWall(worldWidth*999/2000, worldWidth*1001/2000, worldHeight*2/3, false));
+		this.obstacles.add(new VerticalWall(worldWidth*999/2000, 0, worldHeight * (1 - openingRatio) / 2,false));
+		this.obstacles.add(new VerticalWall(worldWidth*1001/2000, 0, worldHeight * (1 - openingRatio) / 2,false));
+		this.obstacles.add(new VerticalWall(worldWidth*999/2000, worldHeight - (worldHeight * (1 - openingRatio) / 2), worldHeight,false));
+		this.obstacles.add(new VerticalWall(worldWidth*1001/2000, worldHeight - (worldHeight * (1 - openingRatio) / 2), worldHeight,false));
+		this.obstacles.add(new HorizontalWall(worldWidth*999/2000, worldWidth*1001/2000, worldHeight * (1 - openingRatio) / 2, false));
+		this.obstacles.add(new HorizontalWall(worldWidth*999/2000, worldWidth*1001/2000, worldHeight - (worldHeight * (1 - openingRatio) / 2), false));
 
 
 
