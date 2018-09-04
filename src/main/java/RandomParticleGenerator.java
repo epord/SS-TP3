@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class RandomParticleGenerator {
 
-    public Collection<Particle> generateParticles(double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) {
+    public Collection<Particle> generateParticles(double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double speedModule) {
         Collection<Particle> particles = new ArrayList<Particle>();
         Random random = new Random();
         int id = 0;
@@ -15,11 +15,12 @@ public class RandomParticleGenerator {
                 double x = random.nextDouble() * (worldWidth);
                 double y = random.nextDouble() * (worldHeight);
                 double radius = random.nextDouble() * (maxRadius - minRadius) + minRadius;
-                double speedX = random.nextDouble() * (maxSpeed - minSpeed) + minSpeed;
+                double speedX = random.nextDouble();
                 speedX = random.nextBoolean() ? speedX * -1 : speedX;
-                double speedY = random.nextDouble() * (maxSpeed - minSpeed) + minSpeed;
+                double speedY = random.nextDouble();
                 speedY = random.nextBoolean() ? speedY * -1 : speedY;
-                Particle newParticle = new ParticleImpl(id++, radius, x, y, speedX, speedY);
+                double speed = Math.sqrt(speedX * speedX + speedY * speedY);
+                Particle newParticle = new ParticleImpl(id++, radius, x, y, speedX/speed * speedModule, speedY/speed * speedModule);
                 if (isInBounds(newParticle, worldHeight, worldWidth) && !isCollidingWithExistingParticles(newParticle, particles)) {
                     generated = true;
                     particles.add(newParticle);

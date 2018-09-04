@@ -13,7 +13,7 @@ public class Main {
         Integer simulations = 1;
         ExperimentsStatsAgregator<GasMetrics> agregator = new ExperimentsStatsAgregator<>();
         for (int i = 0; i < simulations; i++) {
-            generateRandomWorld("p5/simulation-animator/random.txt", 20, 20, 500, 0.15, 0.15, 2.0, 2.0);
+            generateRandomWorld("p5/simulation-animator/random.txt", 9, 24, 500, 0.15, 0.15, 1.0);
 
             File savedWorld = new File("p5/simulation-animator/random.txt");
             System.out.println(savedWorld.getAbsolutePath());
@@ -47,10 +47,10 @@ public class Main {
         return new GasSimulator2D(particles, worldWidth, worldHeight);
     }
 
-    private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double minSpeed, double maxSpeed) throws Exception{
+    private static void generateRandomWorld(String filename, double worldHeight, double worldWidth, int particlesAmount, double minRadius, double maxRadius, double speedModule) throws Exception{
         // Generate random initial state
         RandomParticleGenerator randomParticleGenerator = new RandomParticleGenerator();
-        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth/2, particlesAmount, minRadius, maxRadius, minSpeed, maxSpeed);
+        Collection<Particle> generatedParticles = randomParticleGenerator.generateParticles(worldHeight, worldWidth/2, particlesAmount, minRadius, maxRadius, speedModule);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter("p5/simulation-animator/random.txt"));
 		bw.write(worldHeight + " " + worldWidth + " " + particlesAmount + "\n");
